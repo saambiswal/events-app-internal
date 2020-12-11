@@ -23,6 +23,28 @@ const mockEvents = {
     ]
 };
 
+function getEvents(req, res) {
+    const returnObj = { events: []};
+        firestore.collection("Events").get()
+            .then((snapshot) => {
+                    if (!snapshot.empty) {
+                        snapshot.docs.forEach(doc => {
+                        const eventObj = doc.data();
+                        //get internal firestore id and assign to object
+                        eventObj.id = doc.id;
+                        //add object to array
+                        console.log(returnObj);
+                        returnObj.events.push(eventObj);
+                        }); 
+                }
+            res.json(returnObj);
+        })
+        .catch((err) => {
+            console.error('Error getting events', err);
+            res.json(returnObj);
+        });
+};
+
 const Firestore = require("@google-cloud/firestore");
 
 // initialize Firestore and set project id from env var
